@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}תוצאות והסברים{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <h2 class="page-title">תוצאות שהוזנו</h2>
+  <p class="meta-line">
+    גיל: <strong>{{ age }}</strong> |
+    מגדר:
+    <strong>{% if gender == 'male' %}זכר{% elif gender == 'female' %}נקבה{% else %}—{% endif %}</strong>
+  </p>
+
+  {% if severe_flag %}
+    <div class="alert alert-warn">
+      <strong>שימו לב:</strong> חלק מהערכים חריגים בצורה שיכולה לדרוש בדיקה רפואית.
+      מומלץ <strong>לתאם בהקדם</strong> עם רופא המשפחה.
+    </div>
+  {% endif %}
+
+  {% if rows %}
+  <div class="results-toolbar">
+    <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">
+     🖨️ הדפס / שמור כ-PDF
+    </button>
+<a href="{% url 'reference_ranges' %}" class="btn btn-sm" target="_blank" rel="noopener">טווחי ייחוס</a>
+
+    <button type="button" id="toggle-abnormal" class="btn btn-sm">
+      הצג רק חריגים
+    </button>
+
+    <div class="legend">
+      <span class="legend-item"><span class="badge badge-high">גבוה</span> גבוה</span>
+      <span class="legend-item"><span class="badge badge-low">נמוך</span> נמוך</span>
+      <span class="legend-item"><span class="badge badge-ok">תקין</span> תקין</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>רכיב</th>
+              <th>הערך שלך</th>
+              <th>טווח ייחוס</th>
+              <th>סטטוס</th>
+              <th style="width:160px;">פעולה</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+              <tr class="{% if r.status != 'normal' %}row-abnormal{% else %}row-normal{% endif %}">
+                <td>{{ r.label }}</td>
+                <td>
+                  {% if r.status != 'normal' %}
+                    <span class="value-flag" data-tip="מחוץ לטווח">{{ r.value }}</span>
+                  {% else %}
+                    {{ r.value }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if r.range %}
+                    <span class="range-tip" data-tip="טווח ייחוס למבוגרים{% if gender == 'male' %} (זכר){% elif gender == 'female' %} (נקבה){% endif %}">
+                      {{ r.range.0 }} – {{ r.range.1 }}
+                    </span>
+                  {% else %}—{% endif %}
+                </td>
+                <td>
+                  {% if r.status == 'low' %}
+                    <span class="badge badge-low">נמוך</span>
+                  {% elif r.status == 'high' %}
+                    <span class="badge badge-high">גבוה</span>
+                  {% else %}
+                    <span class="badge badge-ok">תקין</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if r.status != 'normal' %}
+                    <button type="button" class="btn btn-primary advice-btn" data-target="advice-{{ r.key }}">
+                      מה אפשר לעשות?
+                    </button>
+                    <div id="advice-{{ r.key }}" class="advice-panel">
+                      <em>{{ r.advice }}</em>
+                    </div>
+                  {% else %}
+                    <span class="muted">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if abnormal_count == 0 %}
+        <div class="alert alert-ok">
+          כל הכבוד! הערכים שמסרת תקינים ושמרת על גופך.
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+    <p class="muted">לא נמצאו ערכים להצגה.</p>
+  {% endif %}
+
+  <div class="nav-actions">
+    <a href="/inputs" class="link-back">↩ חזרה להזנה</a>
+  </div>
+
+  <p class="footnote">
+    *מידע זה אינו תחליף לייעוץ רפואי. טווחי הייחוס עשויים להשתנות בין מעבדות; יש לפנות לרופא לבירור פרטני.
+  </p>
+</div>
+
+<script>
+  document.querySelectorAll('.advice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-target');
+      const panel = document.getElementById(id);
+      if (!panel) return;
+      panel.classList.toggle('open');
+      btn.textContent = panel.classList.contains('open') ? 'סגור הצעות' : 'מה אפשר לעשות?';
+    });
+  });
+
+  (function(){
+    const btn = document.getElementById('toggle-abnormal');
+    if (!btn) return;
+    let onlyAbnormal = false;
+    btn.addEventListener('click', () => {
+      onlyAbnormal = !onlyAbnormal;
+      btn.textContent = onlyAbnormal ? 'הצג הכל' : 'הצג רק חריגים';
+      document.querySelectorAll('table.tbl tbody tr').forEach(tr => {
+        const isAbnormal = tr.classList.contains('row-abnormal');
+        tr.style.display = (onlyAbnormal && !isAbnormal) ? 'none' : '';
+      });
+    });
+  })();
+</script>
+{% endblock %}

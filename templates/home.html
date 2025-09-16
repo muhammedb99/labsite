@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}דף הבית{% endblock %}
+
+{% block content %}
+<div class="home-hero">
+  <div class="hero-text">
+    <h1>איזון הגוף, בשפה פשוטה</h1>
+    <p>
+      בדיקות דם עוזרות לנו להבין איך הגוף עובד: כבד, כליות, מלחים, דלקת, סוכר ועוד.
+      אצלנו תקבל/י הסבר עדין וברור—ללא לחץ—ועצות קטנות לשיפור.
+    </p>
+    <a href="/start" class="btn btn-primary btn-lg">נתחיל</a>
+  </div>
+
+  <div class="hero-art">
+    <img
+      src="{% static 'core/imgs/img1.jpg' %}"
+      alt="איור בריאות/בדיקות דם"
+      class="hero-img main"
+      loading="eager"
+    />
+    <img
+      src="{% static 'core/imgs/img2.jpg' %}"
+      alt="לב וכלי דם"
+      class="hero-img side"
+      loading="lazy"
+    />
+  </div>
+</div>
+
+<section class="features">
+  <div class="feature">
+    <div class="feature-icon">🧪</div>
+    <h3>פשטות</h3>
+    <p>מזינים גיל ומגדר, מכניסים לפחות רכיב אחד—ומקבלים משוב רך.</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">🎯</div>
+    <h3>דיוק</h3>
+    <p>השוואה לטווחי ייחוס (כולל תלויי־מגדר) והבהרה מתי לפנות לרופא.</p>
+  </div>
+  <div class="feature">
+    <div class="feature-icon">💡</div>
+    <h3>עצות קטנות</h3>
+    <p>כפתור “מה אפשר לעשות?” עם רעיונות עדינים לשיפור הרגלים.</p>
+  </div>
+</section>
+
+<section class="gallery">
+  <h2 class="section-title">מראים את הגוף בצבעים</h2>
+  <div class="gallery-grid">
+    <figure class="gallery-card">
+      <img
+        src="{% static 'core/imgs/img1.jpg' %}"
+        alt="איור כללי של גוף האדם"
+        width="640" height="400"
+        loading="lazy"
+      />
+      <figcaption>הבנה כללית של מערכות הגוף</figcaption>
+    </figure>
+
+    <figure class="gallery-card">
+      <img
+        src="{% static 'core/imgs/img2.jpg' %}"
+        alt="איברי מערכת הדם"
+        width="640" height="400"
+        loading="lazy"
+      />
+      <figcaption>רכיבי הדם ותפקידם</figcaption>
+    </figure>
+
+    <figure class="gallery-card">
+      <img
+        src="{% static 'core/imgs/img3.jpg' %}"
+        alt="איזון תזונתי ופעילות"
+        width="640" height="400"
+        loading="lazy"
+      />
+      <figcaption>צעדים קטנים לאיזון יומיומי</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>מוכנים לבדוק את הערכים?</h2>
+  <p>לחיצה על הכפתור תוביל להזנת גיל/מגדר ואז להזנת רכיבי בדיקות הדם.</p>
+  <a href="/start" class="btn btn-primary btn-lg">בואו נתחיל</a>
+</section>
+{% endblock %}

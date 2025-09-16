@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>תוצאות בדיקות – הדפסה</title>
+  <link rel="stylesheet" href="/static/site.css">
+  <style>
+    @page { size: A4; margin: 15mm 12mm; }
+    body { font-family: "Heebo", Arial, sans-serif; color:#111; background:#fff; }
+    .container { max-width: 900px; margin:auto; }
+
+    /* hide any navigation or extra UI */
+    .toolbar, .nav-actions, header, footer, nav { display: none !important; }
+
+    /* ---- Custom Header ---- */
+    .report-header { text-align:center; margin-bottom:1.5rem; border-bottom:2px solid #e5e7eb; padding-bottom:.8rem; }
+    .report-header .logo { height:60px; margin-bottom:.5rem; }
+    .report-header h1 { font-size:1.6rem; margin:0; color:#0f172a; }
+    .report-header .sub { font-size:.9rem; color:#666; margin:0; }
+
+    /* ---- Meta ---- */
+    .page-title { font-size: 1.4rem; font-weight:700; margin-bottom:.5rem; color:#0f172a; text-align:center; }
+    .meta-line   { text-align:center; color:#374151; margin:0 0 1rem; }
+
+    /* ---- Alerts ---- */
+    .alert { padding:.8rem 1rem; border-radius:8px; margin:.9rem 0; font-size:.95rem; border:1px solid transparent; }
+    .alert-warn { background:#fff3cd; border-color:#ffeeba; color:#856404; }
+    .alert-ok   { background:#e8f5e9; border-color:#c8e6c9; color:#2e7d32; font-weight:600; }
+
+    /* ---- Card ---- */
+    .card{ border:1px solid #e5e7eb; border-radius:14px; }
+    .card-body{ padding:1rem; }
+
+    /* ---- Table ---- */
+    table.tbl { width:100%; border-collapse: collapse; font-size:.95rem; }
+    table.tbl th, table.tbl td { padding:.6rem .8rem; text-align:center; border-bottom:1px solid #e5e7eb; }
+    table.tbl thead th { background:#f9fafb; font-weight:700; color:#111827; }
+    table.tbl tbody tr.row-abnormal { background:#fff5f5; } /* subtle red for abnormal rows */
+
+    /* ---- Badges ---- */
+    .badge { padding:.2rem .6rem; border-radius:6px; font-weight:600; font-size:.9rem; display:inline-block; }
+    .badge-ok   { background:#e8f5e9; color:#2e7d32; }
+    .badge-low  { background:#fff3cd; color:#b26a00; }
+    .badge-high { background:#ffebee; color:#c62828; }
+    .badge-ok::before   { content:"✓ "; font-weight:700; }
+    .badge-low::before  { content:"↓ "; }
+    .badge-high::before { content:"↑ "; }
+
+    /* advice text */
+    td em { color:#444; font-style:normal; font-size:.9rem; }
+
+    /* Footer note */
+    .footnote { font-size:.8rem; color:#666; margin-top:1.5rem; text-align:center; }
+
+    /* keep colors in PDF/print */
+    @media print {
+      .alert, .badge, .row-abnormal, thead th {
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Custom Header -->
+    <div class="report-header">
+      <img src="/static/core/imgs/logo.png" alt="לוגו" class="logo">
+      <h1>בדיקות דם – דו"ח תוצאות</h1>
+      <p class="sub">מידע אישי להבנת ערכי הבדיקות</p>
+    </div>
+
+    <!-- Patient Info -->
+    <h2 class="page-title">תוצאות שהוזנו</h2>
+    <p class="meta-line">
+      גיל: <strong>{{ age }}</strong> |
+      מגדר: <strong>{% if gender == 'male' %}זכר{% elif gender == 'female' %}נקבה{% else %}—{% endif %}</strong>
+    </p>
+
+    {% if severe_flag %}
+      <div class="alert alert-warn">
+        ⚠ חלק מהערכים חריגים ודורשים תשומת לב רפואית. מומלץ לתאם בהקדם עם רופא המשפחה.
+      </div>
+    {% endif %}
+
+    <div class="card">
+      <div class="card-body">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>רכיב</th>
+              <th>הערך שלך</th>
+              <th>טווח ייחוס</th>
+              <th>סטטוס</th>
+              <th>הכוונה</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+              <tr class="{% if r.status != 'normal' %}row-abnormal{% else %}row-normal{% endif %}">
+                <td>{{ r.label }}</td>
+                <td>{{ r.value }}</td>
+                <td>{% if r.range %}{{ r.range.0 }} – {{ r.range.1 }}{% else %}—{% endif %}</td>
+                <td>
+                  {% if r.status == 'low' %}
+                    <span class="badge badge-low">נמוך</span>
+                  {% elif r.status == 'high' %}
+                    <span class="badge badge-high">גבוה</span>
+                  {% else %}
+                    <span class="badge badge-ok">תקין</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if r.status != 'normal' %}
+                    <em>{{ r.advice }}</em>
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        {% if abnormal_count == 0 %}
+          <div class="alert alert-ok">✔ כל הכבוד! הערכים שמסרת תקינים ושמרת על גופך.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <p class="footnote">
+      *מידע זה אינו תחליף לייעוץ רפואי. טווחי הייחוס עשויים להשתנות בין מעבדות;
+      יש לפנות לרופא לבירור פרטני.
+    </p>
+  </div>
+</body>
+</html>
+<script>
+  window.addEventListener('load', () => {
+    window.print();
+  });
+</script>

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}התחלה – גיל ו־Gender{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="card start-card">
+    <div class="card-body">
+      <h2 class="page-title">נתוני התחלה</h2>
+      <p class="meta-line">
+        הזינו גיל (מעל 18) ובחרו מגדר כדי להמשיך להזנת ערכי הבדיקה.
+      </p>
+
+      <form method="post" id="start-form" novalidate>
+        {% csrf_token %}
+
+        <div class="form-row">
+          <label class="form-label" for="id_age">{{ form.age.label }}</label>
+          {{ form.age }}
+          {% if form.age.errors %}
+            <div class="form-error">{{ form.age.errors }}</div>
+          {% else %}
+            <div class="form-hint">מספרים בלבד, מינימום 18.</div>
+          {% endif %}
+        </div>
+
+        <div class="form-row">
+          <span class="form-label">{{ form.gender.label }}</span>
+          <div class="gender-options">
+            {{ form.gender }}
+          </div>
+          {% if form.gender.errors %}
+            <div class="form-error">{{ form.gender.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="continue-btn" class="btn btn-primary btn-lg" disabled>המשך</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    const form = document.getElementById('start-form');
+    const ageInput = document.getElementById('id_age');
+    const genderInputs = form.querySelectorAll('input[name="gender"]');
+    const btn = document.getElementById('continue-btn');
+
+    function hasGender() {
+      return Array.from(genderInputs).some(r => r.checked);
+    }
+    function isAgeValid() {
+      const v = Number(ageInput.value);
+      return Number.isFinite(v) && v >= 18;
+    }
+    function updateButton() {
+      btn.disabled = !(isAgeValid() && hasGender());
+    }
+
+    form.addEventListener('input', updateButton);
+    form.addEventListener('change', updateButton);
+    document.addEventListener('DOMContentLoaded', updateButton);
+  })();
+</script>
+{% endblock %}

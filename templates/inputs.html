@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}הזנת רכיבי בדיקה{% endblock %}
+
+{% block content %}
+<div class="container inputs-layout">
+
+  <!-- Sidebar דביק לקיצור דרך בין קטגוריות -->
+  <aside class="inputs-aside">
+    <div class="aside-card">
+      <h3 class="aside-title">קטגוריות</h3>
+      <nav class="aside-nav" aria-label="קטגוריות בדיקות">
+        <a href="#sec-liver">תפקודי כבד</a>
+        <a href="#sec-electrolytes">אלקטרוליטים ומינרלים</a>
+        <a href="#sec-kidney">כליות/חנקן</a>
+        <a href="#sec-inflammation">דלקת/כללי</a>
+        <a href="#sec-cbc">ספירת דם</a>
+        <a href="#sec-diff">דיפרנציאל</a>
+        <a href="#sec-thyroid-iron">בלוטת התריס/ברזל</a>
+      </nav>
+
+      <div class="aside-meta">
+        <div class="filled-counter">
+          מולאו: <span id="filled-count">0</span> שדות
+        </div>
+        <a class="link-small" href="/start">← שינוי גיל/‏Gender</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- תוכן הטופס -->
+  <section class="inputs-main">
+    <header class="inputs-header">
+      <h2 class="page-title">הזנת רכיבי בדיקה</h2>
+      <p class="meta-line">גיל: <strong>{{ age }}</strong> | Gender:
+        <strong>{{ gender_label|default:gender }}</strong></p>
+      {% if form.non_field_errors %}
+        <div class="form-error" style="margin-top:.4rem;">{{ form.non_field_errors }}</div>
+      {% endif %}
+    </header>
+
+    <form method="post" id="lab-form" novalidate>
+      {% csrf_token %}
+
+      <!-- תפקודי כבד -->
+      <div class="card form-section" id="sec-liver">
+        <div class="card-body">
+          <h3 class="section-title">תפקודי כבד</h3>
+          <div class="grid-2">
+            <label class="fi">{{ form.alt.label_tag }}{{ form.alt }}</label>
+            <label class="fi">{{ form.ast.label_tag }}{{ form.ast }}</label>
+            <label class="fi">{{ form.alp.label_tag }}{{ form.alp }}</label>
+            <label class="fi">{{ form.ggt.label_tag }}{{ form.ggt }}</label>
+            <label class="fi">{{ form.bilirubin_total.label_tag }}{{ form.bilirubin_total }}</label>
+            <label class="fi">{{ form.bilirubin_direct.label_tag }}{{ form.bilirubin_direct }}</label>
+            <label class="fi">{{ form.albumin.label_tag }}{{ form.albumin }}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- אלקטרוליטים ומינרלים -->
+      <div class="card form-section" id="sec-electrolytes">
+        <div class="card-body">
+          <h3 class="section-title">אלקטרוליטים ומינרלים</h3>
+          <div class="grid-3">
+            <label class="fi">{{ form.sodium.label_tag }}{{ form.sodium }}</label>
+            <label class="fi">{{ form.potassium.label_tag }}{{ form.potassium }}</label>
+            <label class="fi">{{ form.chloride.label_tag }}{{ form.chloride }}</label>
+            <label class="fi">{{ form.calcium.label_tag }}{{ form.calcium }}</label>
+            <label class="fi">{{ form.phosphate.label_tag }}{{ form.phosphate }}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- כליות/חנקן -->
+      <div class="card form-section" id="sec-kidney">
+        <div class="card-body">
+          <h3 class="section-title">כליות / חנקן</h3>
+          <div class="grid-3">
+            <label class="fi">{{ form.urea.label_tag }}{{ form.urea }}</label>
+            <label class="fi">{{ form.creatinine.label_tag }}{{ form.creatinine }}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- דלקת/כללי -->
+      <div class="card form-section" id="sec-inflammation">
+        <div class="card-body">
+          <h3 class="section-title">דלקת / כללי</h3>
+          <div class="grid-3">
+            <label class="fi">{{ form.esr.label_tag }}{{ form.esr }}</label>
+            <label class="fi">{{ form.crp.label_tag }}{{ form.crp }}</label>
+            <label class="fi">{{ form.glucose_fasting.label_tag }}{{ form.glucose_fasting }}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ספירת דם -->
+      <div class="card form-section" id="sec-cbc">
+        <div class="card-body">
+          <h3 class="section-title">ספירת דם</h3>
+          <div class="grid-3">
+            <label class="fi">{{ form.wbc.label_tag }}{{ form.wbc }}</label>
+            <label class="fi">{{ form.rbc.label_tag }}{{ form.rbc }}</label>
+            <label class="fi">{{ form.hb.label_tag }}{{ form.hb }}</label>
+            <label class="fi">{{ form.hct.label_tag }}{{ form.hct }}</label>
+            <label class="fi">{{ form.mcv.label_tag }}{{ form.mcv }}</label>
+            <label class="fi">{{ form.mch.label_tag }}{{ form.mch }}</label>
+            <label class="fi">{{ form.mchc.label_tag }}{{ form.mchc }}</label>
+            <label class="fi">{{ form.rdw.label_tag }}{{ form.rdw }}</label>
+            <label class="fi">{{ form.plt.label_tag }}{{ form.plt }}</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- דיפרנציאל -->
+      <div class="card form-section" id="sec-diff">
+        <div class="card-body">
+          <h3 class="section-title">דיפרנציאל</h3>
+          <div class="grid-3">
+            <label class="fi">{{ form.neutrophils_pct.label_tag }}{{ form.neutrophils_pct }}</label>
+            <label class="fi">{{ form.lymphocytes_pct.label_tag }}{{ form.lymphocytes_pct }}</label>
+            <label class="fi">{{ form.lymphocytes_abs.label_tag }}{{ form.lymphocytes_abs }}</label>
+            <label class="fi">{{ form.monocytes_pct.label_tag }}{{ form.monocytes_pct }}</label>
+            <label class="fi">{{ form.monocytes_abs.label_tag }}{{ form.monocytes_abs }}</label>
+            <label class="fi">{{ form.eosinophils_pct.label_tag }}{{ form.eosinophils_pct }}</label>
+            <label class="fi">{{ form.eosinophils_abs.label_tag }}{{ form.eosinophils_abs }}</label>
+            <label class="fi">{{ form.basophils_pct.label_tag }}{{ form.basophils_pct }}</label>
+            <label class="fi">{{ form.basophils_abs.label_tag }}{{ form.basophils_abs }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card form-section" id="sec-thyroid-iron">
+        <div class="card-body">
+          <h3 class="section-title">בלוטת התריס / ברזל</h3>
+          <div class="grid-3">
+            <label class="fi">{{ form.tsh.label_tag }}{{ form.tsh }}</label>
+            <label class="fi">{{ form.ferritin.label_tag }}{{ form.ferritin }}</label>
+            <label class="fi">{{ form.b12.label_tag }}{{ form.b12 }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions sticky-actions">
+        <button type="submit" id="continue-btn" class="btn btn-primary btn-lg" disabled>המשך</button>
+        <span class="muted small-note">צריך למלא לפחות רכיב אחד כדי להמשיך</span>
+      </div>
+    </form>
+  </section>
+
+</div>
+
+<script>
+  (function(){
+    const form = document.getElementById('lab-form');
+    const btn = document.getElementById('continue-btn');
+    const counter = document.getElementById('filled-count');
+
+    function countFilled(){
+      const inputs = form.querySelectorAll('input[type="number"], input[type="text"]');
+      let n = 0;
+      inputs.forEach(i => { if (i.value && i.value.trim() !== "") n++; });
+      return n;
+    }
+    function updateState(){
+      const n = countFilled();
+      if (counter) counter.textContent = n;
+      btn.disabled = n === 0;
+    }
+    form.addEventListener('input', updateState);
+    document.addEventListener('DOMContentLoaded', updateState);
+  })();
+
+  document.querySelectorAll('.aside-nav a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el){
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+{% endblock %}
