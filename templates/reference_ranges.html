@@ -3,60 +3,57 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <title>טווחי ייחוס</title>
+  <title>טווחי ייחוס – {{ bucket_label }}</title>
   <link rel="stylesheet" href="{% static 'site.css' %}">
   <style>
-    .ref-toolbar{
-      display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; margin:.6rem 0 1rem;
-    }
-    .seg{
-      display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden;
-    }
-    .seg a{
-      text-decoration:none; padding:.35rem .7rem; color:#111; background:#fff; display:inline-block;
-    }
+    .ref-toolbar{ display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; margin:.6rem 0 1rem; }
+    .seg{ display:inline-flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+    .seg a{ text-decoration:none; padding:.35rem .7rem; color:#111; background:#fff; display:inline-block; }
     .seg a.active{ background:#1f7aec; color:#fff; }
     .note{ color:#6b7280; font-size:.9rem; }
-
+    .badge{
+      display:inline-block; padding:.15rem .5rem; border-radius:999px; font-size:.85rem;
+      background:#eef2ff; color:#1f3a8a; border:1px solid #c7d2fe; margin-inline-start:.35rem;
+    }
     .search-wrap{ position:relative; }
-    #ref-search{
-      background:#fff; border:1px solid var(--line); border-radius:10px;
-      padding:.45rem .8rem; min-width:220px; outline:none; font-size:.96rem;
-    }
-    #ref-search:focus{
-      border-color: rgba(31,122,236,.5);
-      box-shadow: 0 0 0 3px rgba(31,122,236,.16);
-    }
-
-    mark{
-      background: #fff3cd; color: inherit; padding: 0 .12rem; border-radius:4px;
-    }
-
-    @media print{
-      .ref-toolbar{ display:none !important; }
-      thead th{ -webkit-print-color-adjust:exact; print-color-adjust:exact; background:#f9fafb; }
-    }
+    #ref-search{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:.45rem .8rem; min-width:220px; outline:none; font-size:.96rem; }
+    #ref-search:focus{ border-color: rgba(31,122,236,.5); box-shadow: 0 0 0 3px rgba(31,122,236,.16); }
+    mark{ background:#fff3cd; color:inherit; padding:0 .12rem; border-radius:4px; }
+    @media print{ .ref-toolbar{ display:none!important; } thead th{ -webkit-print-color-adjust:exact; print-color-adjust:exact; background:#f9fafb; } }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 class="page-title">טווחי ייחוס (מבוגרים)</h2>
-    <p class="meta-line">תצוגה לפי: <strong>{{ gender_label }}</strong></p>
+    <h2 class="page-title">
+      טווחי ייחוס
+      <span class="badge">{{ bucket_label }}</span>
+    </h2>
+    <p class="meta-line">
+      תצוגה לפי: <strong>{{ gender_label }}</strong>
+      {% if age %} | גיל נוכחי: <strong>{{ age }}</strong>{% endif %}
+    </p>
 
     <div class="ref-toolbar">
       <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">הדפס / PDF</button>
 
+      {# Gender segment #}
       <div class="seg" role="tablist" aria-label="בחירת מגדר">
-        <a href="{% url 'reference_ranges' %}?g=any" class="{% if gender == 'any' %}active{% endif %}" role="tab">כללי</a>
-        <a href="{% url 'reference_ranges' %}?g=male" class="{% if gender == 'male' %}active{% endif %}" role="tab">זכר</a>
-        <a href="{% url 'reference_ranges' %}?g=female" class="{% if gender == 'female' %}active{% endif %}" role="tab">נקבה</a>
+        <a href="{% url 'reference_ranges' %}?g=any&ab={{ active_ab }}" class="{% if gender == 'any' %}active{% endif %}" role="tab">כללי</a>
+        <a href="{% url 'reference_ranges' %}?g=male&ab={{ active_ab }}" class="{% if gender == 'male' %}active{% endif %}" role="tab">זכר</a>
+        <a href="{% url 'reference_ranges' %}?g=female&ab={{ active_ab }}" class="{% if gender == 'female' %}active{% endif %}" role="tab">נקבה</a>
+      </div>
+
+      {# NEW: Age bucket segment #}
+      <div class="seg" role="tablist" aria-label="בחירת גיל">
+        <a href="{% url 'reference_ranges' %}?g={{ gender }}&ab=p" class="{% if active_ab == 'p' %}active{% endif %}" role="tab">ילדים/נוער</a>
+        <a href="{% url 'reference_ranges' %}?g={{ gender }}&ab=a" class="{% if active_ab == 'a' %}active{% endif %}" role="tab">מבוגרים</a>
       </div>
 
       <div class="search-wrap">
         <input id="ref-search" type="search" placeholder="חיפוש רכיב… (לדוגמה: ALT, אשלגן)">
       </div>
 
-      <span class="note">חלק מהרכיבים אינם תלויי־מגדר והטווח זהה בכל בחירה.</span>
+      <span class="note">הטווחים מותאמי גיל ומגדר (כאשר קיים טווח ייעודי); בחלק מהרכיבים הטווח זהה בכל בחירה.</span>
     </div>
 
     <div class="card">
@@ -87,7 +84,7 @@
         </div>
 
         <p class="footnote" style="margin-top:1rem">
-          *הטווחים מבוססים על מקורות כלליים למבוגרים (כללית). טווחים עשויים להשתנות בין מעבדות ובהקשרים קליניים שונים.
+          *הטווחים נקבעים לפי גיל ומגדר כאשר קיימים ערכי ייחוס מתאימים. טווחים עשויים להשתנות בין מעבדות ובהקשרים קליניים שונים.
           אין באמור תחליף לייעוץ רפואי.
         </p>
       </div>
@@ -102,7 +99,6 @@
     (function(){
       const q = document.getElementById('ref-search');
       const rows = Array.from(document.querySelectorAll('#ref-table tbody tr'));
-
       let t; const debounce = (fn, ms=120) => (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
 
       function clearMarks(el){
@@ -114,11 +110,10 @@
       function highlight(cell, term){
         if(!term){ return; }
         const text = cell.textContent;
-        const re = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'); 
+        const re = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
         const newHtml = text.replace(re, m => `<mark>${m}</mark>`);
         cell.innerHTML = newHtml;
       }
-
       function filter(){
         const term = (q.value || '').trim();
         const norm = term.normalize('NFKC');
@@ -131,7 +126,6 @@
           if (show && norm) highlight(cell, norm);
         });
       }
-
       q.addEventListener('input', debounce(filter, 120));
     })();
   </script>
