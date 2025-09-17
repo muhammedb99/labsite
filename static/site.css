@@ -535,26 +535,72 @@ html[dir="rtl"] body, body{
 .section-title{ margin:.2rem 0 .8rem; font-size:1.1rem; }
 
 /* Fields grid */
-.grid-2{ display:grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap:.6rem .8rem; }
-.grid-3{ display:grid; grid-template-columns: repeat(3, minmax(190px, 1fr)); gap:.6rem .8rem; }
-
-.fi{
-  display:grid; gap:.25rem;
-  font-weight:600;
-}
-.fi input{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:.5rem .6rem;
-  font-size:.98rem;
-  outline:none;
-}
-.fi input:focus{
-  border-color: rgba(31,122,236,.5);
-  box-shadow: 0 0 0 3px rgba(31,122,236,.18);
+.inputs-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.25rem;
 }
 
+.inputs-aside {
+  order: 2;       /* RTL: הצד הימני */
+  position: sticky;
+  top: 80px;
+}
+
+.inputs-main { order: 1; }
+
+.grid-2, .grid-3, .grid-4 {
+  display: grid;
+  gap: 1rem;
+}
+
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* כל תא שדה – לייבל וטקסטבוקס נפרדים, לא input בתוך label */
+.fi {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: .4rem;
+  min-width: 0; /* חשוב לגריד */
+}
+
+.fi .lbl {
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.fi input[type="number"],
+.fi input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: .55rem .7rem;
+  border: 1px solid #d9dbe0;
+  border-radius: .6rem;
+  background: #fff;
+}
+
+/* קלפים וטיוב כותרות */
+.card { background:#fff; border:1px solid #eceff3; border-radius:1rem; }
+.card-body { padding: 1.1rem; }
+.section-title { margin: 0 0 .8rem; font-size: 1.05rem; font-weight: 700; }
+
+/* סיידבר */
+.aside-card { background:#fff; border:1px solid #eceff3; border-radius:1rem; padding:1rem; }
+.aside-title { margin:0 0 .6rem; font-size:1rem; font-weight:700; }
+.aside-nav a {
+  display:block; padding:.5rem .4rem; border-radius:.5rem; color:#1f2a3a; text-decoration:none;
+}
+.aside-nav a:hover { background:#f2f6ff; }
+
+/* מסכים צרים – עמודה אחת */
+@media (max-width: 880px) {
+  .inputs-layout { grid-template-columns: 1fr; }
+  .inputs-aside { order: 2; position: static; }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 /* Sticky submit */
 .sticky-actions{
   position: sticky; bottom: 10px;

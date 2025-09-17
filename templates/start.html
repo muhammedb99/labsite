@@ -9,7 +9,7 @@
     <div class="card-body">
       <h2 class="page-title">נתוני התחלה</h2>
       <p class="meta-line">
-        הזינו גיל (מעל 18) ובחרו מגדר כדי להמשיך להזנת ערכי הבדיקה.
+        הזינו גיל ובחרו מגדר כדי להמשיך להזנת ערכי הבדיקה.
       </p>
 
       <form method="post" id="start-form" novalidate>
@@ -21,7 +21,7 @@
           {% if form.age.errors %}
             <div class="form-error">{{ form.age.errors }}</div>
           {% else %}
-            <div class="form-hint">מספרים בלבד, מינימום 18.</div>
+            <div class="form-hint">מספרים בלבד (ניתן להזין כל גיל).</div>
           {% endif %}
         </div>
 
@@ -54,10 +54,12 @@
     function hasGender() {
       return Array.from(genderInputs).some(r => r.checked);
     }
+
     function isAgeValid() {
       const v = Number(ageInput.value);
-      return Number.isFinite(v) && v >= 18;
+      return Number.isFinite(v) && v >= 0;
     }
+
     function updateButton() {
       btn.disabled = !(isAgeValid() && hasGender());
     }

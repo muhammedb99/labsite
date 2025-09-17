@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import AgeGenderForm, LabInputsForm
-from .reference import compare_value, HEBREW_LABELS, advice_for, is_severe ,RANGES
+from .reference import compare_value, EN_LABELS, advice_for, is_severe, RANGES, CATEGORIES
 from django.http import HttpResponse
 from pathlib import Path
 
@@ -70,7 +70,7 @@ def results_view(request):
             abnormal_count += 1
         rows.append({
             "key": key,
-            "label": HEBREW_LABELS.get(key, key),
+            "label": EN_LABELS.get(key, key),
             "value": val,
             "status": status,
             "range": (lo, hi) if lo is not None else None,
@@ -103,8 +103,6 @@ def results_pdf_view(request):
     if not age or not gender or not data:
         return redirect("start")
 
-    # נשתמש באותו עיבוד של rows כמו ב-results_view
-    from .reference import compare_value, HEBREW_LABELS, advice_for, is_severe
     rows, abnormal_count = [], 0
     for key, raw in data.items():
         try:
@@ -116,7 +114,7 @@ def results_pdf_view(request):
             abnormal_count += 1
         rows.append({
             "key": key,
-            "label": HEBREW_LABELS.get(key, key),
+            "label": LABELS.get(key, key),
             "value": val,
             "status": status,
             "range": (lo, hi) if lo is not None else None,
@@ -146,7 +144,7 @@ def reference_ranges_view(request):
     gender_label = {"male": "זכר", "female": "נקבה", "any": "כללי"}[g]
 
     rows = []
-    for key, label in HEBREW_LABELS.items():
+    for key, label in EN_LABELS.items():
         spec = RANGES.get(key, {})
         rng = spec.get(g) or spec.get("any")
         rows.append({
